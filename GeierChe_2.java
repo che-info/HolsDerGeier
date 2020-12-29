@@ -98,32 +98,63 @@ public class GeierChe_2 extends Player {
 		int card = 0;
 		// System.out.println(countGames + " " + countRounds + "." + pointCard);
 		switch (countRounds) {
-		/* spiezielle Kartenlegetechnik für die erste Runde */
+		/* spezielle Kartenlegetechnik für die erste Runde */
 		case 1:
+			//ist die PunkteKarte 9 oder 10 lege ich 15
 			if (pointCard == 10 || pointCard == 9) {
 				card = 15;
-			} else if (pointCard == -5 || pointCard == -4 || pointCard > 7) {
+				break;
+			} 
+			//ist die Punktekarte -4,-5oder 8 lege ich 12
+			else if (pointCard == -5 || pointCard == -4 || pointCard > 7) {
 				card = 12;
-			} else if (pointCard < -1 || pointCard > 4) {
+				break;
+			} 
+			//ist die PunkteKarte -2,-3,5,6 oder 7lege ich 11
+			else if (pointCard < -1 || pointCard > 4) {
 				card = 11;
-			} else {
+				break;
+			} 
+			//ansonsten lege ich 5
+			else {
 				card = 5;
+				break;
 			}
 			/* spezielle Kartenlegetechnik für die zweite Runde */
 		case 2:
+			/*ist die PunkteKarte 14 oder 15
+			 * und hat der Gegner die gleiche höchste Karte noch wie ich
+			 * dann lege ich meine zweithöchste Karte
+			 * wenn nicht, lege ich meine höchste Karte
+			 */
 			if (pointCard > 13) {
 				if (enemyCards.get(enemyCards.size() - 1) == myCards.get(myCards.size() - 1)) {
-					card = 10;
-				} else if (pointCard < -3) {
+					card = myCards.get(myCards.size()-2);
+				} 
+				else {
+					card=myCards.get(myCards.size()-1);
+				}
+			}
+			else if (pointCard < -3) {
 					card = myCards.get(myCards.size() - 1);
 				}
 
-			}
 			/*
 			 * aber der dritten Runde wird immer gleich entschieden, welche Karte zu spielen
 			 * ist
 			 */
 		default:
+			if(pointCard>13) {
+				if(enemyCards.get(enemyCards.size()-1)!=myCards.get(myCards.size()-1)) {
+					card=myCards.get(myCards.size()-1);
+				}else {
+					card=1;
+				}
+			}
+			else if(pointCard<-3) {
+				card=myCards.get(myCards.size()-3);
+			}
+			else if (pointCard)
 			if (myCards.contains(card)) {
 				return card;
 			} else {
@@ -190,12 +221,15 @@ public class GeierChe_2 extends Player {
 		
 		else if (countGames == 2 & countRounds == 1) {
 			enemyStrategy_1.add(enemyCard);
+			enemyStrategy_2.add(pointCardValue);
 		} /*
 		 * in der zweiten Runde wird die zweite Array-list mit den Karten des Gegners zu
 		 * den jeweiligen PunkteKarten hintereinander gefüllt
 		 */else if (countGames == 2 & countRounds > 1) {
-			enemyStrategy_2.add(enemyCard);
-			enemyStrategy_2.add(pointCardValue);
+				enemyStrategy_2.add(enemyCard);
+				enemyStrategy_2.add(pointCardValue);
+		
+			
 		}
 
 		else if (countGames == 3 & countRounds == 1) {
@@ -208,7 +242,7 @@ public class GeierChe_2 extends Player {
 			for (int i = 1; i < enemyStrategy_1.size(); i += 2) {
 				int points = enemyStrategy_1.get(i);
 				int enemy = enemyStrategy_1.get(i + 1);
-				for (int j = 1; j < enemyStrategy_2.size(); j += 2) {
+				for (int j = 0; j < enemyStrategy_2.size(); j += 2) {
 					if (enemyStrategy_2.get(j) == points) {
 						if (enemyStrategy_2.get(j + 1) != enemy) {
 							strategy = false;
