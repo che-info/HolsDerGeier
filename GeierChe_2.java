@@ -105,106 +105,14 @@ public class GeierChe_2 extends Player {
 		switch (countRounds) {
 		/* spezielle Kartenlegetechnik für die erste Runde */
 		case 1:
-			// ist die PunkteKarte 9 oder 10 lege ich 14
-			if (pointCard == 10 || pointCard == 9) {
-				card = 14;
-				break;
-			}
-			// ist die Punktekarte -4,-5,7oder 8 lege ich 12
-			else if (pointCard == -5 || pointCard == -4 || pointCard > 6) {
-				card = 12;
-				break;
-			}
-			// ist die PunkteKarte -2,-3,5,6 lege ich 11
-			else if (pointCard < -1 || pointCard > 4) {
-				card = 11;
-				break;
-			}
-			// ansonsten lege ich eine Karte mit dem gleichen Wert wie die PunkteKarte
-			else {
-				card = pointCard;
-			}
-			break;
-		/* spezielle Kartenlegetechnik für die zweite Runde */
-		case 2:
-			/*
-			 * ist die PunkteKarte 9 oder 10 und hat der Gegner die gleiche höchste Karte
-			 * noch wie ich dann lege ich meine zweithöchste Karte wenn nicht, lege ich
-			 * meine höchste Karte
-			 */
-			if (pointCard > 8) {
-				if (enemyCards.get(enemyCards.size() - 1) == myCards.get(myCards.size() - 1)) {
-					card = myCards.get(0);
-
-				} else {
-					card = myCards.get(myCards.size() - 1);
-				}
-			}
-			/*
-			 * ist die PunktKarte -4 oder -5 und der Gegner hat in der Runde zuvor noch
-			 * nicht die 12 gelegt oder ich habe keine 12 mehr dann lege ich meine höchste
-			 * Karte hat er die 12 schon gespielt und ich kann die 12 noch spielen dann
-			 * spiele ich die 12
-			 */
-			else if (pointCard < -3) {
-				if (enemyCards.contains(12)) {
-					card = myCards.get(myCards.size() - 1);
-				} else {
-					if (myCards.contains(12)) {
-						card = 12;
-					} else {
-						card = myCards.get(myCards.size() - 1);
-					}
-
-				}
-			}
-			/*
-			 * ist die PunkteKarte zwischen 1 und 8 lege ich eine Karte mit dem gleichen
-			 * Wert
-			 */
-
-			else if (pointCard > 0 & pointCard <= 8) {
-				card = pointCard;
-			}
-			/* anosnten spiele ich eine Karte aus der Mitte */
-			else {
-				card = playMiddleCard();
-			}
+			card = roundOne(pointCard);
 			break;
 		/*
-		 * ab der dritten Runde wird immer gleich entschieden, welche Karte zu spielen
+		 * ab der zweiten Runde wird immer gleich entschieden, welche Karte zu spielen
 		 * ist
 		 */
 		default:
-			/*
-			 * bei 7,8, -1,-2,-3,-4,-5 wenn der Gegner nicht mehr die gleiche höchste Karte
-			 * hat wie ich, spiele ich meine höchste Karte haben wir die gleiche höchste
-			 * Karte und habe ich noch genug karten auf der hand, dann spiele ich meine
-			 * dritthöchste Karte wenn nicht, spiele ich meine mittlere Karte
-			 */
-			if (pointCard == 7 || pointCard == 8 || pointCard < 0) {
-				if (enemyCards.get(enemyCards.size() - 1) != myCards.get(myCards.size() - 1)) {
-					card = myCards.get(myCards.size() - 1);
-				} else {
-					if (myCards.size() > 2) {
-						card = myCards.get(myCards.size() - 3);
-					} else {
-						card = playMiddleCard();
-					}
-
-				}
-			}
-			/* bei 9,10 spiele ich aufjedenfall meine höchste Karte */
-			else if (pointCard > 8) {
-				card = myCards.get(myCards.size() - 1);
-			}
-			/*
-			 * liegt die PunkteKarte zwischen 1 und 6 lege ich eine Karte mit dem gleichen
-			 * Wert wie die PunkteKarte
-			 */
-			else if (pointCard > 0 && pointCard < 7) {
-				card = pointCard;
-			}
+			card=this.roundElse(pointCard);
 
 		}
 		/*
@@ -218,6 +126,94 @@ public class GeierChe_2 extends Player {
 			return playMiddleCard();
 		}
 
+	}
+
+	private int roundOne(int pointCard) {
+		// ist die PunkteKarte 9 oder 10 lege ich 14
+		if (pointCard == 10 || pointCard == 9) {
+			return 1;
+		}
+		// ist die PunkteKarte 6,7,8 lege ich 13
+		else if (pointCard>5)
+			return 13;
+		// ist die Punktekarte -4,-5,4oder 5 lege ich 12
+		else if (pointCard == -5 || pointCard == -4 || pointCard == 4 || pointCard == 5) {
+			return 12;
+		}
+		// ist die PunkteKarte -1,-2,-3 lege ich 11
+		else if (pointCard < 0) {
+			return 10;
+
+		}
+		// ansonsten lege ich eine Karte mit dem gleichen Wert wie die PunkteKarte
+		else {
+			return pointCard;
+		}
+	}
+
+	private int roundElse(int pointCard) {
+		int card = 0;
+
+		switch (pointCard) {
+		/*
+		 * ist die PunkteKarte 9 oder 10 und hat der Gegner die gleiche höchste Karte
+		 * noch wie ich dann lege ich meine niedrigste Karte wenn nicht, lege ich meine
+		 * höchste Karte
+		 */
+		case 10:
+		case 9:
+			if (enemyCards.get(enemyCards.size() - 1) != myCards.get(myCards.size() - 1)) {
+				card = myCards.get(myCards.size() - 1);
+
+			} else {
+				card = myCards.get(0);
+			}
+			break;
+		case 8:
+		case 7:
+		case 6:
+			if (gameCards.contains(10)|| gameCards.contains(9)) {
+				card=pointCard+5;
+			}
+			else {
+				card = myCards.get(myCards.size()-1);
+			}
+			break;
+		case 5:
+		case 4:
+		case 3:
+		case 2:
+		case 1:
+			card=pointCard;
+			break;
+		case -1:
+		case -2:
+		case -3:
+			card= this.playMiddleCard();
+			break;
+			/*
+			 * ist die PunktKarte -4 oder -5 und der Gegner hat in der Runde zuvor noch
+			 * nicht die 12 gelegt oder ich habe keine 12 mehr dann lege ich meine höchste
+			 * Karte hat er die 12 schon gespielt und ich kann die 12 noch spielen dann
+			 * spiele ich die 12
+			 */
+
+		case -4:
+		case -5:
+			if (enemyCards.contains(12)) {
+				card= myCards.get(myCards.size() - 1);
+			} else {
+				if (myCards.contains(12)) {
+					return 12;
+				} else {
+					card= myCards.get(myCards.size() - 1);
+				}
+
+			}
+			default:
+				card = pointCard;
+		}
+		return card;
 	}
 
 	/*
@@ -282,64 +278,75 @@ public class GeierChe_2 extends Player {
 		 * in der ersten Runde wird die erste Dimension der Array-list mit den Karten
 		 * des Gegners zu den jeweiligen PunkteKarten hintereinander gefüllt
 		 */
-
 		switch (countGames) {
 		case 1:
-			if (countRounds == 1) {
-				enemyStrategy.add(Spiele);
-				enemyStrategy.get(0).add(pointCardValue);
-			} /*
-				 * else if (countRounds==15){ enemyStrategy.get(0).add(pointCardValue); }
-				 */
-			else {
-				enemyStrategy.get(0).add(enemyCard);
-				enemyStrategy.get(0).add(pointCardValue);
-			}
+			this.caseOne(pointCardValue, enemyCard);
 			break;
-
 		case 2:
-			/* zunächst noch hinzufügen der letzten GegnerKarte aus dem ersten Spiel */
-			if (countRounds == 1) {
-				enemyStrategy.get(0).add(enemyCard);
-				enemyStrategy.add(Spiele2);
-				enemyStrategy.get(1).add(pointCardValue);
-				/*
-				 * dann befüllen der zweiten Dimesnion der ArrayList mit den Karten des Gegners
-				 * zu den jeweiligen PunkteKarten hintereinander
-				 */
-			} 
-			else {
-				
-				enemyStrategy.get(1).add(enemyCard);
-				enemyStrategy.get(1).add(pointCardValue);
-			}
+			this.caseTwo(pointCardValue, enemyCard);
 			break;
 		case 3:
-			if (countRounds == 2) {
-				enemyStrategy.get(1).add(enemyCard);
-			} else if (countRounds == 3) {
-				/*
-				 * überprüfen ob die Zuordnung der erten Dimension der List zur Zuordnung der
-				 * zweiten Dimension der List passt wenn nein wird strategy auf false gesetzt
-				 * --> der Gegner legt nicht jede Runde, die gleiche Karte auf eine PunkteKarte
-				 * --> ich kann die Strategie nicht lernen
-				 */
+			this.caseThree(enemyCard);
+			break;
+		default:
+			System.out.println(strategy);
+		}
 
-				for (int i = 0; i < enemyStrategy.get(0).size(); i += 2) {
-					int points = enemyStrategy.get(0).get(i);
-					int enemy = enemyStrategy.get(0).get(i + 1);
-					for (int j = 0; j < enemyStrategy.get(1).size(); j += 2) {
-						if (enemyStrategy.get(1).get(j) == points) {
-							if (enemyStrategy.get(1).get(j + 1) != enemy) {
-								strategy = false;
-							}
-						}
+	}
+
+	private void caseOne(int pointCardValue, int enemyCard) {
+		if (countRounds == 1) {
+			enemyStrategy.add(Spiele);
+			enemyStrategy.get(0).add(pointCardValue);
+		} /*
+			 * else if (countRounds==15){ enemyStrategy.get(0).add(pointCardValue); }
+			 */ else {
+			enemyStrategy.get(0).add(enemyCard);
+			enemyStrategy.get(0).add(pointCardValue);
+		}
+	}
+
+	private void caseTwo(int pointCardValue, int enemyCard) {
+		/* zunächst noch hinzufügen der letzten GegnerKarte aus dem ersten Spiel */
+		if (countRounds == 1) {
+			enemyStrategy.get(0).add(enemyCard);
+			enemyStrategy.add(Spiele2);
+			enemyStrategy.get(1).add(pointCardValue);
+			/*
+			 * dann befüllen der zweiten Dimesnion der ArrayList mit den Karten des Gegners
+			 * zu den jeweiligen PunkteKarten hintereinander
+			 */
+		} else {
+
+			enemyStrategy.get(1).add(enemyCard);
+			enemyStrategy.get(1).add(pointCardValue);
+		}
+	}
+
+	private void caseThree(int enemyCard) {
+		if (countRounds == 2) {
+			enemyStrategy.get(1).add(enemyCard);
+		} else if (countRounds == 3) {
+			/*
+			 * überprüfen ob die Zuordnung der erten Dimension der List zur Zuordnung der
+			 * zweiten Dimension der List passt wenn nein wird strategy auf false gesetzt
+			 * --> der Gegner legt nicht jede Runde, die gleiche Karte auf eine PunkteKarte
+			 * --> ich kann die Strategie nicht lernen
+			 */
+
+			int points;
+			int enemy;
+			for (int i = 0; i < enemyStrategy.get(0).size(); i += 2) {
+				points = enemyStrategy.get(0).get(i);
+				enemy = enemyStrategy.get(0).get(i + 1);
+
+				for (int j = 0; j < enemyStrategy.get(1).size(); j += 2) {
+					if (enemyStrategy.get(1).get(j) == points && enemyStrategy.get(1).get(j + 1) != enemy) {
+						strategy = false;
+						break;
 					}
 				}
 			}
-
-			break;
 		}
-
 	}
 }
